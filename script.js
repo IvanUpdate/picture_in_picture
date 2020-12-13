@@ -1,21 +1,24 @@
-function spy(func) {
-    let calls = [];
-    return function(...args) {
-      let final = [];
-      for (arg of args) {
-        final.push(arg);
-      }
-      calls.push(final);
-    let result = func.call(this,...args);
-    return result;
-    }
+const videoElement = document.getElementById('video');
+const button = document.getElementById('button');
 
-  }
-  let work = (a, b) => a + b;
-  work = spy(work);
-  let a = work(1, 2);
-  let b = work(3, 4);
-  console.log(a);
-  console.log(b);
-  console.log(a.calls);
-  console.log(b.calls);
+async function selectMediaStream() {
+    try {
+        const mediaStream = await navigator.mediaDevices.getDisplayMedia();
+        videoElement.srcObject = mediaStream;
+        videoElement.onloadedmetadata = () => {
+            videoElement.play();
+            console.log("start");
+        }
+    } catch (error) {
+        // catch error here
+        console.log("Your error: ", error);
+    }
+}
+
+button.addEventListener('click', async () => {
+    button.disabled = true;
+    await videoElement.requestPictureInPicture();
+    button.disabled = false;
+});
+
+selectMediaStream();
